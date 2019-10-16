@@ -1,6 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 
-interface WorkerDecoratorOptions {
+export interface WorkerDecoratorOptions {
   reference: string;
 }
 export const NEST_RABBIT_TASKS_WORKER = '__nest_rabbit_tasks_worker';

@@ -1,8 +1,6 @@
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
 
-import { QueueOptions, ExchangeOptions } from 'haredo';
-
-import { RabbitWorkerInterface } from './nest-rabbit-tasks.abstract';
+import { QueueOptions, ExchangeOptions, HaredoMessage } from 'haredo';
 
 /**
  * The `GlobalOptions` are the AMQP unspecific options such as
@@ -87,3 +85,7 @@ export type NestRabbitTasksModuleAsyncOptions =
   | NestRabbitTasksModuleExistingAsyncOptions
   | NestRabbitTasksModuleClassAsyncOptions
   | NestRabbitTasksModuleFactoryAsyncOptions;
+
+export interface RabbitWorkerInterface<T> {
+  handleMessage(data: T, message: HaredoMessage<T>): Promise<void>;
+}
