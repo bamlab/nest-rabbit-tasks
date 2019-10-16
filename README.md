@@ -1,6 +1,6 @@
 # Nest Rabbit Worker
 
-![rabbit](./docs/images/rabbit.jpeg)
+![rabbit](https://images.unsplash.com/photo-1480554840075-72cbdabbf689?ixlib=rb-1.2.1&auto=format&fit=crop&w=3300&q=80)
 
 Nest Rabbit Worker is a TaskQueue based upon RabbitMQ.
 
