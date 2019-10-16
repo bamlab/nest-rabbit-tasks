@@ -2,6 +2,11 @@
   "name": "nest-rabbit-tasks",
   "license": "MIT",
   "version": "0.1.2",
+  "homepage": "https://github.com/bamlab/nest-rabbit-worker",
+  "repository": {
+    "url": "git@github.com:bamlab/nest-rabbit-worker.git",
+    "type": "git"
+  },
   "main": "dist/index.js",
   "module": "dist/nest-rabbit-tasks.esm.js",
   "typings": "dist/index.d.ts",
