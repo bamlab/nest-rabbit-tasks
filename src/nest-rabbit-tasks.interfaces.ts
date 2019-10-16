@@ -38,7 +38,7 @@ interface NestRabbitTasksEntityOptions {
 /**
  * `NestRabbitTasksQueueOptions` are the options requested to create / connect to an existing AMQP 0-9-1 `Queue`
  */
-interface NestRabbitTasksQueueOptions extends NestRabbitTasksEntityOptions {
+export interface NestRabbitTasksQueueOptions extends NestRabbitTasksEntityOptions {
   entityType: 'queue';
   entity: QueueEntity;
   worker: Type<RabbitWorkerInterface<any>>;
@@ -60,10 +60,10 @@ interface NestRabbitTasksExchangeOptions extends NestRabbitTasksEntityOptions {
   entity: ExchangeEntity;
 }
 
-export type NestRabbitTasksModuleOptions = NestRabbitTasksQueueOptions | NestRabbitTasksExchangeOptions;
+export type NestRabbitTasksModuleSyncOptions = NestRabbitTasksQueueOptions | NestRabbitTasksExchangeOptions;
 
 interface NestRabbitTasksOptionsFactory {
-  createNestRabbitTasksOptions(...args: any[]): NestRabbitTasksModuleOptions | Promise<NestRabbitTasksModuleOptions>;
+  createNestRabbitTasksOptions(...args: any[]): NestRabbitTasksModuleSyncOptions | Promise<NestRabbitTasksModuleSyncOptions>;
 }
 
 interface NestRabbitTasksModuleBaseAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
