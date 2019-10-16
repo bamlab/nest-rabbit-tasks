@@ -1,7 +1,8 @@
+import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
+
 import { QueueOptions, ExchangeOptions } from 'haredo';
 
-import { RabbitWorker } from './nest-rabbit-tasks.abstract';
-import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
+import { RabbitWorkerInterface } from './nest-rabbit-tasks.abstract';
 
 /**
  * The `GlobalOptions` are the AMQP unspecific options such as
@@ -40,7 +41,7 @@ interface NestRabbitTasksEntityOptions {
 interface NestRabbitTasksQueueOptions extends NestRabbitTasksEntityOptions {
   entityType: 'queue';
   entity: QueueEntity;
-  worker: RabbitWorker<any>;
+  worker: Type<RabbitWorkerInterface<any>>;
 }
 
 /**
