@@ -13,13 +13,16 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "release": "release-it"
+    "release": "release-it",
+    "commit": "git-cz"
   },
   "peerDependencies": {},
   "devDependencies": {
     "@types/jest": "24.0.19",
     "@types/lodash": "4.14.144",
     "@types/node": "12.11.1",
+    "commitizen": "4.0.3",
+    "cz-emoji": "1.1.2",
     "husky": "3.0.9",
     "prettier": "1.18.2",
     "tsdx": "0.9.3",
@@ -34,5 +37,10 @@
     "lodash": "4.17.15",
     "reflect-metadata": "0.1.13",
     "release-it": "*"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-emoji"
+    }
   }
 }
