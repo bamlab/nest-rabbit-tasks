@@ -1,20 +1,21 @@
 import { OnModuleInit, Module, DynamicModule } from '@nestjs/common';
 
-import { NestRabbitTasksModuleOptions, NestRabbitTasksModuleAsyncOptions } from './nest-rabbit-tasks.interfaces';
+import { NestRabbitTasksModuleSyncOptions, NestRabbitTasksModuleAsyncOptions } from './nest-rabbit-tasks.interfaces';
+import { NestRabbitWorkerDynamic } from './nest-rabbit-worker.dynamic';
 
 @Module({})
 export class NestRabbitTasksModule implements OnModuleInit {
-  public static registerSync(options: NestRabbitTasksModuleOptions | NestRabbitTasksModuleOptions[]): DynamicModule {
-    console.log(options);
+  public static registerSync(options: NestRabbitTasksModuleSyncOptions | NestRabbitTasksModuleSyncOptions[]): DynamicModule {
     return {
       module: NestRabbitTasksModule,
+      ...NestRabbitWorkerDynamic.getSyncDynamics(options),
     };
   }
 
   public static registerAsync(options: NestRabbitTasksModuleAsyncOptions | NestRabbitTasksModuleAsyncOptions[]): DynamicModule {
-    console.log(options);
     return {
       module: NestRabbitTasksModule,
+      ...NestRabbitWorkerDynamic.getAsyncDynamics(options),
     };
   }
 
