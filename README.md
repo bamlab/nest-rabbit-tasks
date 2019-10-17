@@ -136,13 +136,55 @@ export class EmailWorker extends RabbitWorker<Event> {
 }
 ```
 
+## Advanced usage
+
+### Async configuration
+
+Why: your configuration may be dynamic, depends on env variable or API calls.
+
+```ts
+@Module({
+  imports: [
+    NestRabbitTasksModule.registerAsync({
+      // The reference must be static and unique
+      reference: 'toto',
+      // Same for the entity type
+      entityType: 'queue',
+      // The handler is static too
+      // (but that is not a mandatory constraint in the code, let me know if you have usages that)
+      // (... requires it to be dynamic. I just found it made more sense like this in my use cases.)
+      worker: TestWorker,
+      // The rest of the options are dynamic
+      // (We only provide `useFactory` for now but `useExisting` and `useClass` can be easily implemented)
+      useFactory: async (configService: ConfigService) => {
+        const queueName = await configService.getQueueName();
+        return {
+          entity: { queueName },
+          amqpOptions: { connectionUrl: 'amqp://localhost:5672' },
+          globalOptions: { immutableInfrastructure: true, prefetchSize: 1 },
+        };
+      },
+      // For it to work you have to import a module, eg. a config module
+      // that export a service, eg. a config service
+      // and inject the configService, so `useFactory` can resolve it
+      imports: [ConfigModule],
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [TestWorker],
+})
+export class AppModule {}
+```
+
 ## Road-map
 
 - [x] implement the `immutableInfrastructure` mode
 - [x] connect Rabbit logger to nest Logger and improve debug logs
 - [x] properly check that config is correct and report error if not
+- [x] implement async configuration (`registerAsync`)
+- [x] prevent `Haredo` deps to leak
 - [ ] implement `@OnEvent(rabbitEventName: string)` to decorate a method of the `Worker` that will be call when rabbitEventName is emitted in the queue
 - [ ] work on quality (unit tests, E2E tests)
 - [ ] improve the doc (`registerAsync`)
-- [x] prevent `Haredo` deps to leak
+
 - [ ] implement an `Exchange` class (so users can publish to exchange using this)
