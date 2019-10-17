@@ -2,7 +2,7 @@
 
 `nest-rabit-tasks` is a `TaskQueue` based upon `RabbitMQ` for `NestJS`.
 
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/nest-rabbit-tasks?style=for-the-badge) ![Scrutinizer code quality (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/quality/g/bamlab/nest-rabbit-tasks?style=for-the-badge)
+![NPM](https://img.shields.io/npm/l/nest-rabbit-tasks?style=for-the-badge) ![David](https://img.shields.io/david/bamlab/nest-rabbit-tasks?style=for-the-badge) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/nest-rabbit-tasks?style=for-the-badge) ![Scrutinizer code quality (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/quality/g/bamlab/nest-rabbit-tasks?style=for-the-badge)
 
 ![rabbit](https://images.unsplash.com/photo-1480554840075-72cbdabbf689?ixlib=rb-1.2.1&auto=format&fit=crop&w=3300&q=80)
 
