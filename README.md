@@ -45,7 +45,7 @@ import { SMTPService } from './service/smtp.service';
 @Module({
   imports: [
     // Note that there is also a `registerAsync` method
-    // that allows the parameters to depend on an injected configservice.
+    // that allows the parameters to depend on an injected configService.
     // You can have a look at the interface to see what options it takes.
     NestRabbitTasksModule.registerSync({
       // That is not the name of RabbitMQ queue
@@ -56,7 +56,7 @@ import { SMTPService } from './service/smtp.service';
       entityType: 'queue',
       // AMQP connection/channel wide options.
       amqpOptions: { connectionUrl: 'amqp://localhost:5672' },
-      // Module option that dictate wthe worker behaviour
+      // Module option that dictate the worker behavior
       globalOptions: {
         // By default RabbitMQ create queue if the queue doesn't exist
         // By setting `{ immutableInfrastructure: true }` will throw if the queue does not exist
@@ -73,7 +73,7 @@ import { SMTPService } from './service/smtp.service';
       worker: EmailWorker,
     }),
   ],
-  // Here youy should import the worker (EmailWorker)
+  // Here you should import the worker (EmailWorker)
   // and other service you need
   providers: [EmailWorker, SMTPService],
 })
@@ -85,10 +85,10 @@ export class AppModule {}
 import { NestFactory } from '@nestjs/core';
 
 async function bootstrap() {
-  // Start the module like alaways
+  // Start the module like always
   const app = await NestFactory.create(AppModule);
   // And launch it.
-  // Having an HTTP port is useful to configure an healthcheck route
+  // Having an HTTP port is useful to configure an health-check route
   await app.listen(3000);
 }
 ```
@@ -96,7 +96,7 @@ async function bootstrap() {
 and create a worker:
 
 ```ts
-import { RabbitWorker, RabbitTasksWorker } from 'nest-rabbit-tasks';
+import { RabbitWorker, RabbitTasksWorker, RabbitTasksWorker } from 'nest-rabbit-tasks';
 
 // You can specify what the Event looks like.
 // By default it is any.
@@ -115,19 +115,19 @@ export class EmailWorker extends RabbitWorker<Event> {
   public constructor(private readonly smtpService: SMTPService) {}
 
   // This method is mandatory
-  public async handleMessage(data: Event, message: HaredoMessage<Event, void>) {
+  public async handleMessage(data: Event, message: RabbitTasksWorker<Event, void>) {
     if (data.name === 'send-mail') {
-      await this.smtpService.sendEmail(data.recipient, datat.cc, data.bcc, data.content);
+      await this.smtpService.sendEmail(data.recipient, data.cc, data.bcc, data.content);
       // Acknowledge the message to remove it from the queue
       message.ack();
     } else {
       log.error('unknown event');
       if (message.getHeader('x-retries') < 3) {
-        // Nacknowledge the message but with retry
+        // Non acknowledge the message but with retry
         // to requeue it and process it later
         message.nack(true);
       } else {
-        // Nacknowledge the message without retry
+        // Non acknowledge the message without retry
         // to remove it from the queue
         message.nack(false);
       }
@@ -136,11 +136,13 @@ export class EmailWorker extends RabbitWorker<Event> {
 }
 ```
 
-## Roadmap
+## Road-map
 
-- [ ] implement the `immutableInfrastructure` mode
+- [x] implement the `immutableInfrastructure` mode
+- [x] connect Rabbit logger to nest Logger and improve debug logs
+- [x] properly check that config is correct and report error if not
 - [ ] implement `@OnEvent(rabbitEventName: string)` to decorate a method of the `Worker` that will be call when rabbitEventName is emitted in the queue
 - [ ] work on quality (unit tests, E2E tests)
 - [ ] improve the doc (`registerAsync`)
-- [ ] prevent `Haredo` deps to leak
+- [x] prevent `Haredo` deps to leak
 - [ ] implement an `Exchange` class (so users can publish to exchange using this)
