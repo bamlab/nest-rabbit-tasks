@@ -1,12 +1,14 @@
-# Nest Rabbit Worker
+# nest-tabbit-tasks
+
+`nest-rabit-tasks` is a `TaskQueue` based upon `RabbitMQ` for `NestJS`.
+
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/nest-rabbit-tasks?style=for-the-badge) ![Scrutinizer code quality (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/quality/g/bamlab/nest-rabbit-tasks?style=for-the-badge)
 
 ![rabbit](https://images.unsplash.com/photo-1480554840075-72cbdabbf689?ixlib=rb-1.2.1&auto=format&fit=crop&w=3300&q=80)
 
-`nest-rabit-worker` is a `TaskQueue` based upon `RabbitMQ` for `NestJS`.
-
 ## Motivation
 
-By working hard on abstracting `NestJS` injection and `RabbitMQ` connection, we want to make it easy to do background task in Nest.
+By working hard on abstracting `NestJS` injection and `RabbitMQ` connection, we want to make it easy to do background task in `NestJS`.
 `nest-bull` is a reference, which is `bull` and `redis` to provide the work queue. `nest-bull` and `bull` are the state of art about
 how complexity can be hidden and abstracted so building a queue is actually fun.
 
