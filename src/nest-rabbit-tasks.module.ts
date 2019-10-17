@@ -1,17 +1,23 @@
-import { OnModuleInit, Module as ModuleDecorator, DynamicModule } from '@nestjs/common';
+import { OnModuleInit, Module as ModuleDecorator, DynamicModule, Logger } from '@nestjs/common';
 import { ModuleRef, ModulesContainer, Reflector } from '@nestjs/core';
 import { Injectable } from '@nestjs/common/interfaces';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 
-import { HaredoChain, MessageCallback } from 'haredo';
+import { HaredoChain, MessageCallback, setLoggers } from 'haredo';
 import _ from 'lodash';
 
-import { NestRabbitTasksModuleSyncOptions, NestRabbitTasksModuleAsyncOptions, RabbitWorkerInterface } from './nest-rabbit-tasks.interfaces';
+import {
+  NestRabbitTasksModuleSyncOptions,
+  NestRabbitTasksModuleAsyncOptions,
+  RabbitWorkerInterface,
+} from './nest-rabbit-tasks.interfaces';
 import { NestRabbitWorkerDynamic } from './nest-rabbit-worker.dynamic';
 
 import { NEST_RABBIT_TASKS_WORKER, WorkerDecoratorOptions } from './nest-rabbit-tasks.decorator';
 import { NestRabbitWorkerToken } from './nest-rabbit-worker.token';
+
+const logger = new Logger('AMQPRabbitTaskModule');
 
 @ModuleDecorator({})
 export class NestRabbitTasksModule implements OnModuleInit {
@@ -36,6 +42,7 @@ export class NestRabbitTasksModule implements OnModuleInit {
   ) {}
 
   public onModuleInit() {
+    setLoggers({ error: logger.error.bind(logger), info: logger.log.bind(logger), debug: logger.debug.bind(logger) });
     this.scanAndBindRabbitTasksWorkerToQueueConnection();
   }
 
@@ -53,12 +60,14 @@ export class NestRabbitTasksModule implements OnModuleInit {
       )
       .map(({ instance, metatype }: InstanceWrapper<RabbitWorkerInterface<any>>) => {
         const metadata = this.reflector.get<WorkerDecoratorOptions>(NEST_RABBIT_TASKS_WORKER, metatype);
+
+        let queueConnectionReference = NestRabbitWorkerToken.getTokenForQueueConnection(metadata.reference);
+
         let queueConnection: HaredoChain;
         try {
-          queueConnection = this.moduleRef.get<HaredoChain>(NestRabbitWorkerToken.getTokenForQueueConnection(metadata.reference));
+          queueConnection = this.moduleRef.get<HaredoChain>(queueConnectionReference);
         } catch (err) {
-          // TODO: log error
-          // no queue found with name
+          logger.error(`No QueueEntity was found with the given name (${queueConnectionReference}). Check your configuration.`);
           throw err;
         }
         return { worker: instance, queueConnection };
@@ -66,8 +75,8 @@ export class NestRabbitTasksModule implements OnModuleInit {
       .map(({ worker, queueConnection }: { worker: RabbitWorkerInterface<any>; queueConnection: HaredoChain }) => {
         return new MetadataScanner().scanFromPrototype(worker, Object.getPrototypeOf(worker), name => {
           if (name === 'handleMessage') {
-            queueConnection.subscribe(worker.handleMessage as MessageCallback<any>).catch(() => {
-              // TODO: log errors
+            queueConnection.subscribe(worker.handleMessage as MessageCallback<any>).catch((err: Error) => {
+              logger.error(err.message, err.stack);
             });
           }
           Promise.resolve(true);
