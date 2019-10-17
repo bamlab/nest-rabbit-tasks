@@ -62,12 +62,13 @@ export class NestRabbitTasksModule implements OnModuleInit {
         return { worker: instance, queueConnection };
       })
       .map(({ worker, queueConnection }: { worker: RabbitWorkerInterface<any>; queueConnection: HaredoChain }) => {
-        new MetadataScanner().scanFromPrototype(worker, Object.getPrototypeOf(worker), name => {
+        return new MetadataScanner().scanFromPrototype(worker, Object.getPrototypeOf(worker), name => {
           if (name === 'handleMessage') {
             queueConnection.subscribe(worker.handleMessage as MessageCallback<any>).catch(() => {
               // TODO: log errors
             });
           }
+          Promise.resolve(true);
         });
       })
       .value();

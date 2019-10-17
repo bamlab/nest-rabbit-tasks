@@ -1,9 +1,6 @@
 module.exports = {
   hooks: {
-    beforeBump: [
-      //'yarn lint',
-      //'yarn test'
-    ],
+    beforeBump: ['yarn lint', 'yarn test'],
     beforeStage: 'yarn build',
   },
   git: {
