@@ -60,32 +60,47 @@ interface NestRabbitTasksExchangeOptions extends NestRabbitTasksEntityOptions {
 
 export type NestRabbitTasksModuleSyncOptions = NestRabbitTasksQueueOptions | NestRabbitTasksExchangeOptions;
 
-interface NestRabbitTasksOptionsFactory {
-  createNestRabbitTasksOptions(...args: any[]): NestRabbitTasksModuleSyncOptions | Promise<NestRabbitTasksModuleSyncOptions>;
-}
+export type NestRabbitTasksModuleAsyncQueuePartialOptions = Omit<
+  NestRabbitTasksQueueOptions,
+  'entityType' | 'reference' | 'worker'
+>;
+export type NestRabbitTasksModuleAsyncExchangePartialOptions = Omit<NestRabbitTasksExchangeOptions, 'entityType' | 'reference'>;
 
-interface NestRabbitTasksModuleBaseAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
+interface NestRabbitTasksModuleBaseQueueAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   reference: string;
-  inject?: [];
+  entityType: 'queue';
+  worker: Type<RabbitWorkerInterface<any>>;
 }
 
-interface NestRabbitTasksModuleExistingAsyncOptions extends NestRabbitTasksModuleBaseAsyncOptions {
-  useExisting: Type<NestRabbitTasksOptionsFactory>;
+interface NestRabbitTasksModuleFactoryAsyncQueueOptions {
+  useFactory: (
+    ...args: any[]
+  ) => Promise<NestRabbitTasksModuleAsyncQueuePartialOptions> | NestRabbitTasksModuleAsyncQueuePartialOptions;
+  inject?: any[];
 }
 
-interface NestRabbitTasksModuleClassAsyncOptions extends NestRabbitTasksModuleBaseAsyncOptions {
-  useClass: Type<NestRabbitTasksOptionsFactory>;
+export type NestRabbitTasksModuleAsyncQueueOptions = NestRabbitTasksModuleBaseQueueAsyncOptions &
+  NestRabbitTasksModuleFactoryAsyncQueueOptions;
+
+interface NestRabbitTasksModuleBaseExchangeAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
+  reference: string;
+  entityType: 'exchange';
 }
 
-interface NestRabbitTasksModuleFactoryAsyncOptions extends NestRabbitTasksModuleBaseAsyncOptions {
-  useFactory: Type<NestRabbitTasksOptionsFactory>;
+interface NestRabbitTasksModuleFactoryAsyncExchangeOptions {
+  useFactory: (
+    ...args: any[]
+  ) => Promise<NestRabbitTasksModuleAsyncExchangePartialOptions> | NestRabbitTasksModuleAsyncExchangePartialOptions;
+  inject?: any[];
 }
 
-export type NestRabbitTasksModuleAsyncOptions =
-  | NestRabbitTasksModuleExistingAsyncOptions
-  | NestRabbitTasksModuleClassAsyncOptions
-  | NestRabbitTasksModuleFactoryAsyncOptions;
+export type NestRabbitTasksModuleAsyncExchangeOptions = NestRabbitTasksModuleBaseExchangeAsyncOptions &
+  NestRabbitTasksModuleFactoryAsyncExchangeOptions;
 
 export interface RabbitWorkerInterface<T> {
   handleMessage(data: T, message: HaredoMessage<T>): Promise<void>;
 }
+
+export type NestRabbitTasksModuleAsyncOptions =
+  | NestRabbitTasksModuleAsyncQueueOptions
+  | NestRabbitTasksModuleAsyncExchangeOptions;
