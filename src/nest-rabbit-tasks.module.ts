@@ -1,8 +1,4 @@
 import { OnModuleInit, Module as ModuleDecorator, DynamicModule, Logger } from '@nestjs/common';
-import { ModuleRef, ModulesContainer, Reflector } from '@nestjs/core';
-import { Injectable } from '@nestjs/common/interfaces';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 
 import { HaredoChain, MessageCallback, setLoggers } from 'haredo';
 import _ from 'lodash';
@@ -13,11 +9,12 @@ import {
   RabbitWorkerInterface,
 } from './nest-rabbit-tasks.interfaces';
 import { NestRabbitWorkerDynamic } from './nest-rabbit-worker.dynamic';
+import { NestRabbitTasksExplorer } from './nest-rabbit-tasks.explorer';
 
-import { NEST_RABBIT_TASKS_WORKER, WorkerDecoratorOptions } from './nest-rabbit-tasks.decorator';
-import { NestRabbitWorkerToken } from './nest-rabbit-worker.token';
-
-const logger = new Logger('AMQPRabbitTaskModule');
+interface QueueConnectionAndWorkerBindParams {
+  worker: RabbitWorkerInterface<any>;
+  queueConnection: HaredoChain | null;
+}
 
 @ModuleDecorator({})
 export class NestRabbitTasksModule implements OnModuleInit {
@@ -35,53 +32,38 @@ export class NestRabbitTasksModule implements OnModuleInit {
     };
   }
 
-  public constructor(
-    readonly modulesContainer: ModulesContainer,
-    readonly moduleRef: ModuleRef,
-    private readonly reflector: Reflector
-  ) {}
+  public constructor(private readonly explorer: NestRabbitTasksExplorer, private readonly logger: Logger) {}
 
   public onModuleInit() {
-    setLoggers({ error: logger.error.bind(logger), info: logger.log.bind(logger), debug: logger.debug.bind(logger) });
-    this.scanAndBindRabbitTasksWorkerToQueueConnection();
+    setLoggers({
+      error: this.logger.error.bind(this.logger),
+      info: this.logger.log.bind(this.logger),
+      debug: this.logger.debug.bind(this.logger),
+    });
+    this.bindMessageFromQueueToMessageHandlerInWorker();
   }
 
-  private scanAndBindRabbitTasksWorkerToQueueConnection() {
-    let allInstanceWrappers: InstanceWrapper<Injectable>[] = [];
-
-    for (let [, container] of this.modulesContainer) {
-      for (let module of container.providers.values()) {
-        allInstanceWrappers.push(module);
+  private bindMessageFromQueueToMessageHandlerInWorker() {
+    this.explorer.explore().map(({ worker, queueConnection }: QueueConnectionAndWorkerBindParams) => {
+      if (!queueConnection) {
+        // The error was already reported earlier
+        return;
       }
-    }
-    _(allInstanceWrappers)
-      .filter(
-        instanceWrapper => instanceWrapper.metatype && !!this.reflector.get(NEST_RABBIT_TASKS_WORKER, instanceWrapper.metatype)
-      )
-      .map(({ instance, metatype }: InstanceWrapper<RabbitWorkerInterface<any>>) => {
-        const metadata = this.reflector.get<WorkerDecoratorOptions>(NEST_RABBIT_TASKS_WORKER, metatype);
-
-        let queueConnectionReference = NestRabbitWorkerToken.getTokenForQueueConnection(metadata.reference);
-
-        let queueConnection: HaredoChain;
-        try {
-          queueConnection = this.moduleRef.get<HaredoChain>(queueConnectionReference);
-        } catch (err) {
-          logger.error(`No QueueEntity was found with the given name (${queueConnectionReference}). Check your configuration.`);
-          throw err;
-        }
-        return { worker: instance, queueConnection };
-      })
-      .map(({ worker, queueConnection }: { worker: RabbitWorkerInterface<any>; queueConnection: HaredoChain }) => {
-        return new MetadataScanner().scanFromPrototype(worker, Object.getPrototypeOf(worker), name => {
-          if (name === 'handleMessage') {
-            queueConnection.subscribe(worker.handleMessage as MessageCallback<any>).catch((err: Error) => {
-              logger.error(err.message, err.stack);
-            });
-          }
-          Promise.resolve(true);
+      if (!worker.handleMessage) {
+        this.logger.error(`The worker (${worker.constructor.name}) have no "handleMessage" function.`);
+        return;
+      }
+      queueConnection
+        .subscribe(worker.handleMessage as MessageCallback<any>)
+        .then(() => {
+          const queueName = queueConnection.state.queue!.name;
+          const workerName = worker.constructor.name;
+          const msg = `Successfully listening on ${workerName}.handleMessage for ${queueName}`;
+          this.logger.log(msg);
+        })
+        .catch((err: Error) => {
+          this.logger.error(err.message, err.stack);
         });
-      })
-      .value();
+    });
   }
 }

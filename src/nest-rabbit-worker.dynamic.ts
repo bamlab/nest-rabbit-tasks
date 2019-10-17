@@ -1,4 +1,4 @@
-import { DynamicModule, Provider } from '@nestjs/common';
+import { DynamicModule, Provider, Logger } from '@nestjs/common';
 import _ from 'lodash';
 
 import {
@@ -8,6 +8,7 @@ import {
 } from './nest-rabbit-tasks.interfaces';
 import { NestRabbitWorkerToken } from './nest-rabbit-worker.token';
 import { NestRabbitTasksRabbitClient } from './nest-rabbit-tasks.rabbitClient';
+import { NestRabbitTasksExplorer } from './nest-rabbit-tasks.explorer';
 
 type Dynamics = Omit<DynamicModule, 'module'>;
 
@@ -31,8 +32,10 @@ export class NestRabbitWorkerDynamic {
     return { imports: [], providers: [], exports: [] };
   }
 
-  // TODO: inject logger
-  private static otherProviders: Provider[] = [];
+  private static otherProviders: Provider[] = [
+    NestRabbitTasksExplorer,
+    { provide: Logger, useValue: new Logger('AMQPRabbitTaskModule') },
+  ];
 
   private static createQueueConnectionProvider(normalizedOptions: NestRabbitTasksModuleSyncOptions[]): Provider[] {
     return _(normalizedOptions)
