@@ -1,21 +1,19 @@
-import { OnModuleInit, Module, DynamicModule } from '@nestjs/common';
+import { OnModuleInit, Module as ModuleDecorator, DynamicModule } from '@nestjs/common';
 import { ModuleRef, ModulesContainer, Reflector } from '@nestjs/core';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { Injectable } from '@nestjs/common/interfaces';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 
 import { HaredoChain, MessageCallback } from 'haredo';
 import _ from 'lodash';
 
-import {
-  NestRabbitTasksModuleSyncOptions,
-  NestRabbitTasksModuleAsyncOptions,
-  RabbitWorkerInterface,
-} from './nest-rabbit-tasks.interfaces';
+import { NestRabbitTasksModuleSyncOptions, NestRabbitTasksModuleAsyncOptions, RabbitWorkerInterface } from './nest-rabbit-tasks.interfaces';
 import { NestRabbitWorkerDynamic } from './nest-rabbit-worker.dynamic';
+
 import { NEST_RABBIT_TASKS_WORKER, WorkerDecoratorOptions } from './nest-rabbit-tasks.decorator';
 import { NestRabbitWorkerToken } from './nest-rabbit-worker.token';
 
-@Module({})
+@ModuleDecorator({})
 export class NestRabbitTasksModule implements OnModuleInit {
   public static registerSync(options: NestRabbitTasksModuleSyncOptions | NestRabbitTasksModuleSyncOptions[]): DynamicModule {
     return {
@@ -42,10 +40,14 @@ export class NestRabbitTasksModule implements OnModuleInit {
   }
 
   private scanAndBindRabbitTasksWorkerToQueueConnection() {
-    const allInjectedModules = [...this.modulesContainer.values()];
+    let allInstanceWrappers: InstanceWrapper<Injectable>[] = [];
 
-    _(allInjectedModules)
-      .flatMap(module => [...module.components.values()])
+    for (let [, container] of this.modulesContainer) {
+      for (let module of container.providers.values()) {
+        allInstanceWrappers.push(module);
+      }
+    }
+    _(allInstanceWrappers)
       .filter(
         instanceWrapper => instanceWrapper.metatype && !!this.reflector.get(NEST_RABBIT_TASKS_WORKER, instanceWrapper.metatype)
       )
