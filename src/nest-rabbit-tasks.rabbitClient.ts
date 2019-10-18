@@ -26,7 +26,7 @@ export class NestRabbitTasksRabbitClient {
       }
     }
 
-    const queue = new Queue(option.entity.queueName);
+    const queue = new Queue(option.entity.queueName, option.entity.queueOptions);
 
     return (
       connection
