@@ -1,0 +1,27 @@
+{
+  "projectName": "nest-rabbit-tasks",
+  "projectOwner": "bamlab",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "tychota",
+      "name": "Tycho Tatitscheff",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/13785185?v=4",
+      "profile": "https://twitter.com/TychoTa",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas",
+        "infra"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
