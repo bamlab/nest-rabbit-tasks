@@ -13,12 +13,15 @@ import { NestRabbitTasksExplorer } from './nest-rabbit-tasks.explorer';
 
 type Dynamics = Omit<DynamicModule, 'module'>;
 
-const logger = new Logger('AMQPRabbitTaskModule');
+const nestRabbitTaskLogger = new Logger('AMQPRabbitTaskModule');
 
 export class NestRabbitWorkerDynamic {
   public static getSyncDynamics(options: NestRabbitTasksModuleSyncOptions | NestRabbitTasksModuleSyncOptions[]): Dynamics {
     const normalizedOptions = _.flatten([options]);
-    const rabbitQueueProviders = NestRabbitWorkerDynamic.createQueueConnectionSyncProvider(normalizedOptions, logger);
+    const rabbitQueueProviders = NestRabbitWorkerDynamic.createQueueConnectionSyncProvider(
+      normalizedOptions,
+      nestRabbitTaskLogger
+    );
     return {
       providers: [
         ...rabbitQueueProviders,
@@ -31,7 +34,10 @@ export class NestRabbitWorkerDynamic {
 
   public static getAsyncDynamics(options: NestRabbitTasksModuleAsyncOptions | NestRabbitTasksModuleAsyncOptions[]): Dynamics {
     const normalizedOptions = _.flatten([options]);
-    const rabbitQueueProviders = NestRabbitWorkerDynamic.createQueueConnectionAsyncProvider(normalizedOptions, logger);
+    const rabbitQueueProviders = NestRabbitWorkerDynamic.createQueueConnectionAsyncProvider(
+      normalizedOptions,
+      nestRabbitTaskLogger
+    );
     return {
       imports:
         normalizedOptions
@@ -49,7 +55,7 @@ export class NestRabbitWorkerDynamic {
     };
   }
 
-  private static otherProviders: Provider[] = [NestRabbitTasksExplorer, { provide: Logger, useValue: logger }];
+  private static otherProviders: Provider[] = [NestRabbitTasksExplorer, { provide: Logger, useValue: nestRabbitTaskLogger }];
 
   private static createQueueConnectionSyncProvider(
     normalizedOptions: NestRabbitTasksModuleSyncOptions[],
