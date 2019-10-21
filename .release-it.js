@@ -1,7 +1,7 @@
 module.exports = {
   hooks: {
-    beforeBump: ['yarn lint', 'yarn test'],
-    beforeStage: 'yarn build',
+    'before:init': ['yarn lint', 'yarn test'],
+    'after:bump': 'yarn build',
   },
   git: {
     requireCleanWorkingDir: true,
