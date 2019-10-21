@@ -44,7 +44,7 @@ export class NestRabbitTasksModule implements OnModuleInit {
   }
 
   private bindMessageFromQueueToMessageHandlerInWorker() {
-    this.explorer.explore().map(({ worker, queueConnection }: QueueConnectionAndWorkerBindParams) => {
+    this.explorer.explore().forEach(({ worker, queueConnection }: QueueConnectionAndWorkerBindParams) => {
       if (!queueConnection) {
         // The error was already reported earlier
         return;
