@@ -109,7 +109,6 @@ export class NestRabbitWorkerDynamic {
         return {
           provide: NestRabbitWorkerToken.getTokenForQueueConnectionOptions(filteredOption.reference),
           useFactory: async (...args: any[]): Promise<NestRabbitTasksQueueOptions> => {
-            console.log(args);
             const partialDynamicOptions = await filteredOption.useFactory(...args);
             return {
               reference: filteredOption.reference,
