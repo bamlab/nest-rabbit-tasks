@@ -6,7 +6,9 @@
 
 ![David](https://img.shields.io/david/bamlab/nest-rabbit-tasks?style=for-the-badge) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/nest-rabbit-tasks?style=for-the-badge)
 
-![Scrutinizer build (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/build/g/bamlab/nest-rabbit-tasks?style=for-the-badge) ![Scrutinizer code quality (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/quality/g/bamlab/nest-rabbit-tasks?style=for-the-badge)
+![CircleCI](https://img.shields.io/circleci/build/github/bamlab/nest-rabbit-tasks/master?style=for-the-badge&token=87ce85715999b1f7547ed34c569cb60d339f9894)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bamlab_nest-rabbit-tasks&metric=alert_status)](https://sonarcloud.io/dashboard?id=bamlab_nest-rabbit-tasks) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=bamlab_nest-rabbit-tasks&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=bamlab_nest-rabbit-tasks) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=bamlab_nest-rabbit-tasks&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=bamlab_nest-rabbit-tasks) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=bamlab_nest-rabbit-tasks&metric=security_rating)](https://sonarcloud.io/dashboard?id=bamlab_nest-rabbit-tasks)
 
 ![rabbit](https://images.unsplash.com/photo-1480554840075-72cbdabbf689?ixlib=rb-1.2.1&auto=format&fit=crop&w=3300&q=80)
 
