@@ -39,6 +39,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://twitter.com/TychoTa"><img src="https://avatars2.githubusercontent.com/u/13785185?v=4" width="100px;" alt="Tycho Tatitscheff"/><br /><sub><b>Tycho Tatitscheff</b></sub></a><br /><a href="https://github.com/bamlab/nest-rabbit-tasks/commits?author=tychota" title="Code">💻</a> <a href="https://github.com/bamlab/nest-rabbit-tasks/commits?author=tychota" title="Documentation">📖</a> <a href="#ideas-tychota" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-tychota" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+    <td align="center"><a href="https://github.com/MattAgn"><img src="https://avatars3.githubusercontent.com/u/32499425?v=4" width="100px;" alt="MattAgn"/><br /><sub><b>MattAgn</b></sub></a><br /><a href="https://github.com/bamlab/nest-rabbit-tasks/commits?author=MattAgn" title="Code">💻</a> <a href="https://github.com/bamlab/nest-rabbit-tasks/commits?author=MattAgn" title="Documentation">📖</a> <a href="#ideas-MattAgn" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 

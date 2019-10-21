@@ -21,6 +21,17 @@
         "ideas",
         "infra"
       ]
+    },
+    {
+      "login": "MattAgn",
+      "name": "MattAgn",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/32499425?v=4",
+      "profile": "https://github.com/MattAgn",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7
