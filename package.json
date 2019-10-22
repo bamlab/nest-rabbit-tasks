@@ -1,7 +1,7 @@
 {
   "name": "nest-rabbit-tasks",
   "license": "MIT",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "homepage": "https://github.com/bamlab/nest-rabbit-tasks",
   "repository": {
     "url": "git@github.com:bamlab/nest-rabbit-tasks.git",
