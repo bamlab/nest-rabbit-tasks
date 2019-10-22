@@ -15,7 +15,7 @@ jest.mock('../src/nest-rabbit-tasks.rabbitClient', () => ({
   },
 }));
 
-describe('BullModule', () => {
+describe('NestRabbitTasksModule', () => {
   let module: TestingModule;
   describe('register', () => {
     describe('single configuration', () => {
