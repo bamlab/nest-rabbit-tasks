@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Haredo, Queue, HaredoChain } from 'haredo';
+import { Haredo, HaredoChain } from 'haredo';
 
 import { NestRabbitTasksQueueOptions } from './nest-rabbit-tasks.interfaces';
 
@@ -7,6 +7,7 @@ let debugMessageCounter = 0;
 
 export class NestRabbitTasksRabbitClient {
   public static async buildQueueConnection(option: NestRabbitTasksQueueOptions, logger: Logger): Promise<HaredoChain | null> {
+    console.log(option.amqpOptions);
     const connection = new Haredo({ connection: option.amqpOptions.connectionUrl });
 
     if (option.globalOptions.immutableInfrastructure) {
@@ -26,11 +27,12 @@ export class NestRabbitTasksRabbitClient {
       }
     }
 
-    const queue = new Queue(option.entity.queueName, option.entity.queueOptions);
-
+    let chain = connection.queue(option.entity.queueName, option.entity.queueOptions);
+    if (option.globalOptions.immutableInfrastructure) {
+      chain = chain.skipSetup();
+    }
     return (
-      connection
-        .queue(queue)
+      chain
         // we do not want to auto acknowledge the messages
         .autoAck(false)
         .reestablish(true)
