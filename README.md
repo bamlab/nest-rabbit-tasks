@@ -119,7 +119,7 @@ async function bootstrap() {
 and create a worker:
 
 ```ts
-import { RabbitWorker, RabbitTasksWorker, RabbitTasksWorker } from 'nest-rabbit-tasks';
+import { AbstractRabbitTasksWorker, RabbitTasksWorker, RabbitWorkerMessage } from 'nest-rabbit-tasks';
 
 // You can specify what the Event looks like.
 // By default it is any.
@@ -132,10 +132,12 @@ interface Event {
 }
 
 @RabbitTasksWorker({ reference: 'worker-email-queue' })
-export class EmailWorker extends RabbitWorker<Event> {
+export class EmailWorker extends AbstractRabbitTasksWorker<Event> {
   // Please do dependency injection
   // and inject what need for the worker to work
-  public constructor(private readonly smtpService: SMTPService) {}
+  public constructor(private readonly smtpService: SMTPService) {
+    this.handleMessage = this.handleMessage.bind(this);
+  }
 
   // This method is mandatory
   public async handleMessage(data: Event, message: RabbitTasksWorker<Event, void>) {
